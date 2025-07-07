@@ -1,0 +1,13 @@
+runpod
+torch>=2.0.0
+torchaudio>=2.0.0
+transformers>=4.30.0
+numpy
+scipy
+librosa
+soundfile
+accelerate
+safetensors
+huggingface_hub
+tokenizers
+regex 

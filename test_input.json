@@ -1,0 +1,14 @@
+{
+    "input": {
+        "text": "Hello world! This is a test of the ChatterboxTTS voice generation system running on RunPod serverless. How does it sound?",
+        "voice_file": "BASE64_ENCODED_VOICE_FILE_HERE",
+        "settings": {
+            "exaggeration": 0.5,
+            "cfg_weight": 0.5,
+            "temperature": 0.8,
+            "min_p": 0.05,
+            "top_p": 1.0,
+            "repetition_penalty": 1.2
+        }
+    }
+} 
