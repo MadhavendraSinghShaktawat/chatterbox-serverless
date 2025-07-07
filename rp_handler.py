@@ -97,6 +97,55 @@ def split_text_into_chunks(text: str, max_length: int = 150) -> list:
     
     return [chunk for chunk in chunks if chunk.strip()]
 
+def fix_base64_padding(base64_string):
+    """Fix base64 padding issues"""
+    # Remove any whitespace and data URL prefixes
+    base64_string = base64_string.strip()
+    
+    # Remove data URL prefix if present
+    if base64_string.startswith('data:'):
+        base64_string = base64_string.split(',', 1)[1]
+    
+    # Remove any whitespace, newlines, or other non-base64 characters
+    base64_string = re.sub(r'[^A-Za-z0-9+/=]', '', base64_string)
+    
+    # Add padding if needed
+    missing_padding = len(base64_string) % 4
+    if missing_padding:
+        base64_string += '=' * (4 - missing_padding)
+    
+    return base64_string
+
+def decode_voice_file(voice_file_b64):
+    """Robust base64 decoding with validation"""
+    if not voice_file_b64:
+        raise ValueError("Voice file base64 string is empty")
+    
+    try:
+        # Fix padding first
+        fixed_b64 = fix_base64_padding(voice_file_b64)
+        
+        # Validate base64 format
+        if not re.match(r'^[A-Za-z0-9+/]*={0,2}$', fixed_b64):
+            raise ValueError("Invalid base64 format")
+        
+        # Decode
+        voice_data = base64.b64decode(fixed_b64)
+        
+        # Validate minimum file size (should be at least a few hundred bytes for audio)
+        if len(voice_data) < 100:
+            raise ValueError(f"Voice file too small: {len(voice_data)} bytes")
+        
+        # Check for common audio file headers
+        if not (voice_data.startswith(b'RIFF') or voice_data.startswith(b'ID3') or 
+                voice_data.startswith(b'\xff\xfb') or voice_data.startswith(b'\xff\xf3')):
+            print("Warning: Voice file doesn't have recognized audio header")
+        
+        return voice_data
+        
+    except Exception as e:
+        raise ValueError(f"Failed to decode voice file: {str(e)}")
+
 def handler(event):
     """
     RunPod serverless handler for voice generation
@@ -132,6 +181,7 @@ def handler(event):
             }
         
         print(f"Processing text: {len(text)} characters")
+        print(f"Voice file base64 length: {len(voice_file_b64)} characters")
         
         # Setup ChatterboxTTS
         if not setup_chatterbox_path():
@@ -163,13 +213,23 @@ def handler(event):
         clean_text = clean_script_for_tts(text)
         print(f"Cleaned text: {len(clean_text)} characters")
         
-        # Decode voice file
+        # Decode voice file with robust error handling
         try:
-            voice_data = base64.b64decode(voice_file_b64)
+            voice_data = decode_voice_file(voice_file_b64)
             print(f"Voice file decoded: {len(voice_data)} bytes")
-        except Exception as e:
+        except ValueError as e:
+            print(f"Voice file decode error: {str(e)}")
             return {
-                "error": f"Failed to decode voice file: {str(e)}"
+                "error": str(e),
+                "debug_info": {
+                    "base64_length": len(voice_file_b64),
+                    "base64_preview": voice_file_b64[:50] + "..." if len(voice_file_b64) > 50 else voice_file_b64
+                }
+            }
+        except Exception as e:
+            print(f"Unexpected voice file error: {str(e)}")
+            return {
+                "error": f"Unexpected error decoding voice file: {str(e)}"
             }
         
         # Save voice file temporarily

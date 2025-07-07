@@ -25,11 +25,20 @@ def encode_voice_file(voice_path):
 def test_runpod_endpoint():
     """Test the RunPod serverless endpoint"""
     
-    # Test data
+    # Test data - 180-200 word script for comprehensive testing
     test_text = """
-    So there I was, standing in the grocery store checkout line, when I noticed something absolutely bizarre. 
-    The person in front of me was buying exactly 47 bananas. Not 46, not 48, but exactly 47. 
-    I couldn't help but wonder what kind of life decisions led to this moment.
+    Picture this: It's 3 AM, and I'm scrolling through TikTok when I stumble upon the most mind-blowing conspiracy theory I've ever heard. 
+    Apparently, dolphins are actually alien spies sent to monitor our beach activities. I know, I know, it sounds crazy, but hear me out.
+    
+    Think about it - dolphins are incredibly intelligent, they communicate in ways we don't fully understand, and they're always watching us from the water. 
+    Plus, have you ever seen a dolphin blink? Exactly. That's because they don't have eyelids like Earth creatures should.
+    
+    But here's where it gets really wild. My friend Jake, who works at SeaWorld, told me that dolphins there have been acting strange lately. 
+    They keep forming perfect geometric patterns in the water, almost like they're transmitting signals. And get this - every time a new iPhone is released, 
+    the dolphins get more active. Coincidence? I think not.
+    
+    Now I can't go to the beach without feeling like I'm being watched. Every time I see a dolphin, I wave, just in case they're reporting back to their mothership. 
+    Better safe than sorry, right?
     """
     
     # Encode voice file (update path as needed)

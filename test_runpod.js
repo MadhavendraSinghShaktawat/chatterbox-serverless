@@ -3,7 +3,7 @@
  */
 
 // Configuration - Use environment variables for security
-const RUNPOD_ENDPOINT = process.env.RUNPOD_ENDPOINT || "https://api.runpod.ai/v2/YOUR_ENDPOINT_ID/run";
+const RUNPOD_ENDPOINT = process.env.RUNPOD_ENDPOINT;
 const RUNPOD_API_KEY = process.env.RUNPOD_API_KEY;
 
 // Convert file to base64 (for Node.js)
